@@ -7,10 +7,13 @@
 //
 
 #import "CHYSlider.h"
+#import <QuartzCore/QuartzCore.h>
 
 @interface CHYSlider ()
 - (void)commonInit;
--(float)xForValue:(float)value;
+- (float)xForValue:(float)value;
+- (float)valueForX:(float)x;
+- (void)updateTrackHighlight;                  // set up track images overlay according to currernt value
 @end
 
 @implementation CHYSlider
@@ -21,6 +24,7 @@
 @synthesize labelOnThumb = _labelOnThumb;
 @synthesize labelAboveThumb = _labelAboveThumb;
 
+#pragma mark - UIView methods
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
@@ -39,6 +43,38 @@
     return self;    
 }
 
+// re-layout subviews in case of first initialization and screen orientation changes
+// track_grey.png and track_orange.png original size: 384x64
+// thumb.png original size: 91x98
+- (void)layoutSubviews
+{
+    // the track background
+    _trackImageViewNormal.frame = self.bounds;
+    _trackImageViewHighlighted.frame = self.bounds;
+    
+    // the thumb
+    CGFloat thumbHeight = 98.f *  _trackImageViewNormal.bounds.size.height / 64.f;   // thumb height is relative to track height
+    CGFloat thumbWidth = 91.f * thumbHeight / 98.f; // thumb width and height keep the same ratio as the original image size
+    _thumbImageView.frame = CGRectMake(0, 0, thumbWidth, thumbHeight);
+    _thumbImageView.center = CGPointMake([self xForValue:_value], CGRectGetMidY(_trackImageViewNormal.frame));
+    
+    // the labels
+    _labelOnThumb.frame = _thumbImageView.frame;
+    _labelAboveThumb.frame = CGRectMake(_labelOnThumb.frame.origin.x, _labelOnThumb.frame.origin.y - _labelOnThumb.frame.size.height * 0.75f, _labelOnThumb.frame.size.width, _labelOnThumb.frame.size.height);
+    
+    // the track
+    [self updateTrackHighlight];
+}
+
+- (void)drawRect:(CGRect)rect
+{
+    _labelOnThumb.center = _thumbImageView.center;
+    _labelAboveThumb.center = CGPointMake(_thumbImageView.center.x, _thumbImageView.center.y - _labelAboveThumb.frame.size.height * 0.75f);
+    
+    [self updateTrackHighlight];
+}
+
+#pragma mark - Helpers
 - (void)commonInit
 {
     _value = 0.f;
@@ -71,38 +107,35 @@
     [self addSubview:_labelAboveThumb];
 }
 
-// re-layout subviews in case of first initialization and screen orientation changes
-// track_grey.png and track_orange.png original size: 384x64
-// thumb.png original size: 91x98
-- (void)layoutSubviews
+- (float)xForValue:(float)value
 {
-    // the track background
-    _trackImageViewNormal.frame = self.bounds;
-    _trackImageViewHighlighted.frame = self.bounds;
-    
-    // the thumb
-    CGFloat thumbHeight = 98.f *  _trackImageViewNormal.bounds.size.height / 64.f;   // thumb height is relative to track height
-    CGFloat thumbWidth = 91.f * thumbHeight / 98.f; // thumb width and height keep the same ratio as the original image size
-    _thumbImageView.frame = CGRectMake(0, 0, thumbWidth, thumbHeight);
-    _thumbImageView.center = CGPointMake([self xForValue:_value], CGRectGetMidY(_trackImageViewNormal.frame));
-    
-    // the labels
-    _labelOnThumb.frame = _thumbImageView.frame;
-    _labelAboveThumb.frame = CGRectMake(_labelOnThumb.frame.origin.x, _labelOnThumb.frame.origin.y - _labelOnThumb.frame.size.height * 0.75f, _labelOnThumb.frame.size.width, _labelOnThumb.frame.size.height);
-}
-
-- (void)drawRect:(CGRect)rect
-{
-    _labelOnThumb.center = _thumbImageView.center;
-    _labelAboveThumb.center = CGPointMake(_thumbImageView.center.x, _thumbImageView.center.y - _labelAboveThumb.frame.size.height * 0.75f);
-}
-
--(float)xForValue:(float)value{
     return self.frame.size.width * (value - _minimumValue) / (_maximumValue - _minimumValue);
 }
 
--(float) valueForX:(float)x{
+- (float)valueForX:(float)x
+{
     return _minimumValue + x / self.frame.size.width * (_maximumValue - _minimumValue);
+}
+
+- (void)updateTrackHighlight
+{
+    // Create a mask layer and the frame to determine what will be visible in the view.
+    CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+    CGFloat thumbMidXInHighlightTrack = CGRectGetMidX([self convertRect:_thumbImageView.frame toView:_trackImageViewNormal]);
+    CGRect maskRect = CGRectMake(0, 0, thumbMidXInHighlightTrack, _trackImageViewNormal.frame.size.height);
+    
+    // Create a path and add the rectangle in it.
+    CGMutablePathRef path = CGPathCreateMutable();
+    CGPathAddRect(path, nil, maskRect);
+    
+    // Set the path to the mask layer.
+    [maskLayer setPath:path];
+    
+    // Release the path since it's not covered by ARC.
+    CGPathRelease(path);
+    
+    // Set the mask of the view.
+    _trackImageViewHighlighted.layer.mask = maskLayer;
 }
 
 #pragma mark - Touch events handling
