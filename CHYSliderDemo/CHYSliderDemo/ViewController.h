@@ -7,7 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "CHYSlider.h"
 
-@interface ViewController : UIViewController
+@interface ViewController : UIViewController {
+    __unsafe_unretained IBOutlet CHYSlider *_slider;
+    __unsafe_unretained IBOutlet UILabel *_valueLabel;
+}
 
+- (IBAction)sliderValueChanged:(id)sender;
 @end

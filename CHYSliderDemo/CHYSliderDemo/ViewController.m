@@ -18,10 +18,13 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    _valueLabel.text = [NSString stringWithFormat:@"%.2f", _slider.value];
 }
 
 - (void)viewDidUnload
 {
+    _valueLabel = nil;
+    _slider = nil;
     [super viewDidUnload];
     // Release any retained subviews of the main view.
 }
@@ -35,4 +38,7 @@
     }
 }
 
+- (IBAction)sliderValueChanged:(id)sender {
+    _valueLabel.text = [NSString stringWithFormat:@"%.2f", _slider.value];
+}
 @end

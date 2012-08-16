@@ -93,6 +93,7 @@
 -(void)endTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event{
     if (_thumbOn) {
         _value = [self valueForX:_thumbImageView.center.x];
+        [self sendActionsForControlEvents:UIControlEventValueChanged];
     }
     _thumbOn = NO;
 }
@@ -105,6 +106,7 @@
     
     if (_continuous) {
         _value = [self valueForX:_thumbImageView.center.x];
+        [self sendActionsForControlEvents:UIControlEventValueChanged];
     }
     
     [self setNeedsDisplay];
