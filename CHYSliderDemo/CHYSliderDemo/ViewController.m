@@ -19,6 +19,9 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     _valueLabel.text = [NSString stringWithFormat:@"%.2f", _slider.value];
+    
+    _slider.labelOnThumb.textColor = [UIColor whiteColor];
+    _slider.labelAboveThumb.font = [UIFont boldSystemFontOfSize:25.f];
 }
 
 - (void)viewDidUnload

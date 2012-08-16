@@ -11,8 +11,6 @@
 @interface CHYSlider : UIControl {
     BOOL _thumbOn;                              // track the current touch state of the slider
     UIImageView *_thumbImageView;               // the slide knob
-    UILabel *_labelOnThumb;                     // overlayed above the thumb knob, moves along with the thumb
-    UILabel *_labelAboveThumb;                  // displayed on top fo the thumb, moves along with the thumb
     UIImageView *_trackImageViewNormal;         // slider track image in normal state
     UIImageView *_trackImageViewHighlighted;    // slider track image in highlighted state
 }
@@ -24,4 +22,10 @@
 @property(nonatomic) float minimumValue;                    // default 0.0. the current value may change if outside new min value
 @property(nonatomic) float maximumValue;                    // default 1.0. the current value may change if outside new max value
 @property(nonatomic,getter=isContinuous) BOOL continuous;   // if set, value change events are generated any time the value changes due to dragging. default = YES
+
+/**
+ Use these properties to customize UILabel font and color
+ */
+@property(nonatomic) UILabel *labelOnThumb;                 // overlayed above the thumb knob, moves along with the thumb
+@property(nonatomic) UILabel *labelAboveThumb;              // displayed on top fo the thumb, moves along with the thumb
 @end
