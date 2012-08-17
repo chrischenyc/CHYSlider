@@ -23,7 +23,6 @@
      */
     
     // the first slider is a continuous-value slider
-    _continuousSlider.labelOnThumb.textColor = [UIColor whiteColor];
     _continuousSlider.labelAboveThumb.font = [UIFont boldSystemFontOfSize:25.f];
     
     // the second slider is a stepped-value slider
@@ -31,7 +30,7 @@
     _steppedSlider.minimumValue = 1;
     _steppedSlider.maximumValue = 6;
     _steppedSlider.value = 2;
-    _steppedSlider.labelOnThumb.textColor = [UIColor whiteColor];
+    _steppedSlider.labelOnThumb.hidden = YES;
     _steppedSlider.labelAboveThumb.font = [UIFont fontWithName:@"AmericanTypewriter-Bold" size:20.f];
     _steppedSlider.labelAboveThumb.textColor = [UIColor blueColor];
     
