@@ -10,8 +10,10 @@
 #import "CHYSlider.h"
 
 @interface ViewController : UIViewController {
-    __unsafe_unretained IBOutlet CHYSlider *_slider;
-    __unsafe_unretained IBOutlet UILabel *_valueLabel;
+    __unsafe_unretained IBOutlet UILabel *_continuousValueLabel;
+    __unsafe_unretained IBOutlet CHYSlider *_continuousSlider;
+    __unsafe_unretained IBOutlet UILabel *_steppedValueLabel;
+    __unsafe_unretained IBOutlet CHYSlider *_steppedSlider;
 }
 
 - (IBAction)sliderValueChanged:(id)sender;

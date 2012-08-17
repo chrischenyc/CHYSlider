@@ -13,6 +13,7 @@
 - (void)commonInit;
 - (float)xForValue:(float)value;
 - (float)valueForX:(float)x;
+- (float)stepMarkerXCloseToX:(float)x;
 - (void)updateTrackHighlight;                  // set up track images overlay according to currernt value
 @end
 
@@ -23,6 +24,7 @@
 @synthesize continuous = _continuous;
 @synthesize labelOnThumb = _labelOnThumb;
 @synthesize labelAboveThumb = _labelAboveThumb;
+@synthesize stepped = _stepped;
 
 #pragma mark - UIView methods
 - (id)initWithFrame:(CGRect)frame
@@ -74,6 +76,40 @@
     [self updateTrackHighlight];
 }
 
+#pragma mark - Accessor Overriding
+
+// use diffrent track background images accordingly
+- (void)setStepped:(BOOL)stepped
+{
+    _stepped = stepped;
+    NSString *trackImageNormal;
+    NSString *trackImageHighlighted;
+    if (_stepped) {
+        trackImageNormal = @"stepped_track_grey.png";
+        trackImageHighlighted = @"stepped_track_orange.png";
+    }
+    else {
+        trackImageNormal = @"track_grey.png";
+        trackImageHighlighted = @"track_orange.png";
+    }
+    _trackImageViewNormal.image = [UIImage imageNamed:trackImageNormal];
+    _trackImageViewHighlighted.image = [UIImage imageNamed:trackImageHighlighted];
+}
+
+- (void)setValue:(float)value
+{
+    if (value < _minimumValue || value > _maximumValue) {
+        return;
+    }
+    
+    _value = value;
+    
+    _thumbImageView.center = CGPointMake([self xForValue:value], _thumbImageView.center.y);
+    
+    _labelOnThumb.text = [NSString stringWithFormat:@"%.1f", _value];
+    _labelAboveThumb.text = [NSString stringWithFormat:@"%.1f", _value];
+}
+
 #pragma mark - Helpers
 - (void)commonInit
 {
@@ -82,6 +118,7 @@
     _maximumValue = 1.f;
     _continuous = YES;
     _thumbOn = NO;
+    _stepped = NO;
     
     self.backgroundColor = [UIColor clearColor];
     
@@ -115,6 +152,20 @@
 - (float)valueForX:(float)x
 {
     return _minimumValue + x / self.frame.size.width * (_maximumValue - _minimumValue);
+}
+
+- (float)stepMarkerXCloseToX:(float)x
+{
+    float xPercent = x / self.frame.size.width;
+    float stepPercent = 1.f / 5.f;
+    float midStepPercent = stepPercent / 2.f;
+    int stepIndex = 0;
+    while (xPercent > midStepPercent) {
+        stepIndex++;
+        midStepPercent += stepPercent;
+    }
+    
+    return stepPercent * (float)stepIndex * self.frame.size.width;
 }
 
 - (void)updateTrackHighlight
@@ -151,6 +202,10 @@
 
 -(void)endTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event{
     if (_thumbOn) {
+        if (_stepped) {
+            _thumbImageView.center = CGPointMake( [self stepMarkerXCloseToX:[touch locationInView:self].x], _thumbImageView.center.y);
+            [self setNeedsDisplay];
+        }
         _value = [self valueForX:_thumbImageView.center.x];
         _labelOnThumb.text = [NSString stringWithFormat:@"%.1f", _value];
         _labelAboveThumb.text = [NSString stringWithFormat:@"%.1f", _value];
@@ -165,7 +220,7 @@
     CGPoint touchPoint = [touch locationInView:self];
     _thumbImageView.center = CGPointMake( MIN( MAX( [self xForValue:_minimumValue], touchPoint.x), [self xForValue:_maximumValue]), _thumbImageView.center.y);
     
-    if (_continuous) {
+    if (_continuous && !_stepped) {
         _value = [self valueForX:_thumbImageView.center.x];
         _labelOnThumb.text = [NSString stringWithFormat:@"%.1f", _value];
         _labelAboveThumb.text = [NSString stringWithFormat:@"%.1f", _value];
