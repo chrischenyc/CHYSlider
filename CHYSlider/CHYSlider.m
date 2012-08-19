@@ -15,6 +15,7 @@
 - (float)valueForX:(float)x;
 - (float)stepMarkerXCloseToX:(float)x;
 - (void)updateTrackHighlight;                  // set up track images overlay according to currernt value
+- (NSString *)valueStringFormat;                // form value string format with given decimal places
 @end
 
 @implementation CHYSlider
@@ -25,6 +26,7 @@
 @synthesize labelOnThumb = _labelOnThumb;
 @synthesize labelAboveThumb = _labelAboveThumb;
 @synthesize stepped = _stepped;
+@synthesize decimalPlaces = _decimalPlaces;
 
 #pragma mark - UIView methods
 - (id)initWithFrame:(CGRect)frame
@@ -62,7 +64,7 @@
     
     // the labels
     _labelOnThumb.frame = _thumbImageView.frame;
-    _labelAboveThumb.frame = CGRectMake(_labelOnThumb.frame.origin.x, _labelOnThumb.frame.origin.y - _labelOnThumb.frame.size.height * 0.75f, _labelOnThumb.frame.size.width, _labelOnThumb.frame.size.height);
+    _labelAboveThumb.frame = CGRectMake(_labelOnThumb.frame.origin.x, _labelOnThumb.frame.origin.y - _labelOnThumb.frame.size.height * 0.6f, _labelOnThumb.frame.size.width, _labelOnThumb.frame.size.height);
     
     // the track
     [self updateTrackHighlight];
@@ -71,7 +73,7 @@
 - (void)drawRect:(CGRect)rect
 {
     _labelOnThumb.center = _thumbImageView.center;
-    _labelAboveThumb.center = CGPointMake(_thumbImageView.center.x, _thumbImageView.center.y - _labelAboveThumb.frame.size.height * 0.75f);
+    _labelAboveThumb.center = CGPointMake(_thumbImageView.center.x, _thumbImageView.center.y - _labelAboveThumb.frame.size.height * 0.6f);
     
     [self updateTrackHighlight];
 }
@@ -106,8 +108,10 @@
     
     _thumbImageView.center = CGPointMake([self xForValue:value], _thumbImageView.center.y);
     
-    _labelOnThumb.text = [NSString stringWithFormat:@"%.1f", _value];
-    _labelAboveThumb.text = [NSString stringWithFormat:@"%.1f", _value];
+    _labelOnThumb.text = [NSString stringWithFormat:[self valueStringFormat], _value];
+    _labelAboveThumb.text = [NSString stringWithFormat:[self valueStringFormat], _value];
+    
+    [self setNeedsDisplay];
 }
 
 #pragma mark - Helpers
@@ -119,6 +123,7 @@
     _continuous = YES;
     _thumbOn = NO;
     _stepped = NO;
+    _decimalPlaces = 0;
     
     self.backgroundColor = [UIColor clearColor];
     
@@ -136,14 +141,14 @@
     _labelOnThumb = [[UILabel alloc] init];
     _labelOnThumb.backgroundColor = [UIColor clearColor];
     _labelOnThumb.textAlignment = UITextAlignmentCenter;
-    _labelOnThumb.text = [NSString stringWithFormat:@"%.1f", _value];
+    _labelOnThumb.text = [NSString stringWithFormat:[self valueStringFormat], _value];
     _labelOnThumb.textColor = [UIColor whiteColor];
     [self addSubview:_labelOnThumb];
     
     _labelAboveThumb = [[UILabel alloc] init];
     _labelAboveThumb.backgroundColor = [UIColor clearColor];
     _labelAboveThumb.textAlignment = UITextAlignmentCenter;
-    _labelAboveThumb.text = [NSString stringWithFormat:@"%.1f", _value];
+    _labelAboveThumb.text = [NSString stringWithFormat:[self valueStringFormat], _value];
     _labelAboveThumb.textColor = [UIColor colorWithRed:232.f/255.f green:151.f/255.f blue:79.f/255.f alpha:1.f];
     [self addSubview:_labelAboveThumb];
 }
@@ -193,6 +198,11 @@
     _trackImageViewHighlighted.layer.mask = maskLayer;
 }
 
+- (NSString *)valueStringFormat
+{
+    return [NSString stringWithFormat:@"%%.%df", _decimalPlaces];
+}
+
 #pragma mark - Touch events handling
 -(BOOL) beginTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event{
     CGPoint touchPoint = [touch locationInView:self];
@@ -211,8 +221,8 @@
             [self setNeedsDisplay];
         }
         _value = [self valueForX:_thumbImageView.center.x];
-        _labelOnThumb.text = [NSString stringWithFormat:@"%.1f", _value];
-        _labelAboveThumb.text = [NSString stringWithFormat:@"%.1f", _value];
+        _labelOnThumb.text = [NSString stringWithFormat:[self valueStringFormat], _value];
+        _labelAboveThumb.text = [NSString stringWithFormat:[self valueStringFormat], _value];
         [self sendActionsForControlEvents:UIControlEventValueChanged];
     }
     _thumbOn = NO;
@@ -226,8 +236,8 @@
     
     if (_continuous && !_stepped) {
         _value = [self valueForX:_thumbImageView.center.x];
-        _labelOnThumb.text = [NSString stringWithFormat:@"%.1f", _value];
-        _labelAboveThumb.text = [NSString stringWithFormat:@"%.1f", _value];
+        _labelOnThumb.text = [NSString stringWithFormat:[self valueStringFormat], _value];
+        _labelAboveThumb.text = [NSString stringWithFormat:[self valueStringFormat], _value];
         [self sendActionsForControlEvents:UIControlEventValueChanged];
     }
     

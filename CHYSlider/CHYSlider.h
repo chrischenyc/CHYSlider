@@ -28,6 +28,7 @@
  */
 @property(nonatomic) UILabel *labelOnThumb;                 // overlayed above the thumb knob, moves along with the thumb
 @property(nonatomic) UILabel *labelAboveThumb;              // displayed on top fo the thumb, moves along with the thumb
+@property(nonatomic) int decimalPlaces;                     // determin how many decimal places are displayed in the value labels
 
 @property(nonatomic, getter = isStepped) BOOL stepped;      // if set, the slider is segmented with 6 values, and thumb only stays on these values. default = NO
 @end
