@@ -165,7 +165,7 @@
 
 - (float)stepMarkerXCloseToX:(float)x
 {
-    float xPercent = x / self.frame.size.width;
+    float xPercent = MIN(MAX(x / self.frame.size.width, 0), 1);
     float stepPercent = 1.f / 5.f;
     float midStepPercent = stepPercent / 2.f;
     int stepIndex = 0;
@@ -232,6 +232,7 @@
     if(!_thumbOn) return YES;
     
     CGPoint touchPoint = [touch locationInView:self];
+    
     _thumbImageView.center = CGPointMake( MIN( MAX( [self xForValue:_minimumValue], touchPoint.x), [self xForValue:_maximumValue]), _thumbImageView.center.y);
     
     if (_continuous && !_stepped) {
