@@ -26,9 +26,9 @@
 /**
  Use these properties to customize UILabel font and color
  */
-@property(nonatomic) UILabel *labelOnThumb;                 // overlayed above the thumb knob, moves along with the thumb
-@property(nonatomic) UILabel *labelAboveThumb;              // displayed on top fo the thumb, moves along with the thumb
+@property(nonatomic) UILabel *labelOnThumb;                 // overlayed above the thumb knob, moves along with the thumb You may customize its `font`, `textColor` and other properties.
+@property(nonatomic) UILabel *labelAboveThumb;              // displayed on top fo the thumb, moves along with the thumb You may customize its `font`, `textColor` and other properties.
 @property(nonatomic) int decimalPlaces;                     // determin how many decimal places are displayed in the value labels
 
-@property(nonatomic, getter = isStepped) BOOL stepped;      // if set, the slider is segmented with 6 values, and thumb only stays on these values. default = NO
+@property(nonatomic, getter = isStepped) BOOL stepped;      // if set, the slider is segmented with 6 values, and thumb only stays on these values. default = NO. (Note: the stepped slider is not fully implemented, I'm considering adding a NSArray steppedValues property in next release)
 @end
