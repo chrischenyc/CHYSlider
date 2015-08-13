@@ -1,7 +1,13 @@
+Deprecated! No longer maintained!
+
+If you want similar features, please use: https://github.com/alskipp/ASValueTrackingSlider
+
+Thanks for visiting, see you later!
+
 CHYSlider
 ====================
 
-CHYSlider is a drop-in iOS control that functions the same way `UISlider` does yet provides great look and feel. If you feel the official UISlider is a bit dull and are looking for something than can add a flavor to your iPhone/iPad apps, CHYSlider is what you want!
+CHYSlider is a drop-in iOS control that functions the same way `UISlider` does yet provides great look and feel. If you feel the official UISlider is a bit dull and are looking for something that can add a flavor to your iPhone/iPad apps, CHYSlider is what you want!
 
 [![](https://dl.dropbox.com/u/12111329/github/CHYSlider/1.png)](https://dl.dropbox.com/u/12111329/github/CHYSlider/1.png)
 [![](https://dl.dropbox.com/u/12111329/github/CHYSlider/2.png)](https://dl.dropbox.com/u/12111329/github/CHYSlider/2.png)
